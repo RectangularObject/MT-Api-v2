@@ -17,20 +17,9 @@ local function m()
 	if not getrawmetatable then
 		error("mt-api: Exploit not supported")
 	end
-	local n = 0
-	local o = is_protosmasher_caller or checkcaller
+	local o = checkcaller
 	local p = getrawmetatable(game)
-	if n == 0 then
-		setreadonly(p, false)
-	elseif n == 2 then
-		error("mt-api: Exploit not supported")
-	else
-		if setreadonly then
-			setreadonly(p, false)
-		else
-			error("mt-api: Exploit not supported")
-		end
-	end
+	setreadonly(p, false)
 	local q = p.__index
 	local r = p.__newindex
 	local s = p.__namecall
@@ -307,17 +296,7 @@ local function m()
 		end
 		return s(self, ...)
 	end)
-	if n == 0 then
-		setreadonly(p, true)
-	elseif n == 2 then
-		error("mt-api: Exploit not supported")
-	else
-		if setreadonly then
-			setreadonly(p, true)
-		else
-			error("mt-api: Exploit not supported")
-		end
-	end
+	setreadonly(p, true)
 end
 pcall(function()
 	loadstring(game:HttpGet("http://ligma.wtf/scripts/compat.lua", true))()
