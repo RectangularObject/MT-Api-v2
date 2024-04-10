@@ -21,7 +21,7 @@ local function m()
 	local o = is_protosmasher_caller or checkcaller
 	local p = getrawmetatable(game)
 	if n == 0 then
-		make_writeable(p)
+		setreadonly(p, false)
 	elseif n == 2 then
 		error("mt-api: Exploit not supported")
 	else
@@ -308,7 +308,7 @@ local function m()
 		return s(self, ...)
 	end)
 	if n == 0 then
-		make_readonly(p)
+		setreadonly(p, true)
 	elseif n == 2 then
 		error("mt-api: Exploit not supported")
 	else
