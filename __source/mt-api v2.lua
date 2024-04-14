@@ -192,7 +192,7 @@ local function m()
 				return { remove = K, Remove = K }
 			end
 		end
-		if not checkcaller() or getgenv().MTAPIDebug then
+		if not o() or getgenv().MTAPIDebug then
 			if d[self] and d[self][E] then
 				local P = d[self][E]
 				if P.Callback then
