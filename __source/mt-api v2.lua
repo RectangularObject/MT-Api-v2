@@ -100,7 +100,6 @@ local function m()
 			end
 			if E == "AddGetHook" then
 				if #D < 1 then error("mt-api: Invalid argument count") end
-				local I = self
 				local t = D[1]
 				local J = D[2]
 				if type(t) ~= "string" then error("mt-api: Invalid hook type") end
@@ -111,7 +110,6 @@ local function m()
 				return { remove = K, Remove = K, modify = L, Modify = L }
 			elseif E == "AddGlobalGetHook" then
 				if #D < 1 then error("mt-api: Invalid argument count") end
-				local I = self
 				local t = D[1]
 				local J = D[2]
 				if type(t) ~= "string" then error("mt-api: Invalid hook type") end
@@ -122,7 +120,6 @@ local function m()
 				local function L(M, N) f[k][t] = { Value = N, IsCallback = type(N) == "function" } end
 				return { remove = K, Remove = K, modify = L, Modify = L }
 			elseif E == "AddSetHook" then
-				local I = self
 				local t = D[1]
 				local J = D[2]
 				if type(t) ~= "string" then error("mt-api: Invalid hook type") end
@@ -140,7 +137,6 @@ local function m()
 					return { remove = K, Remove = K, modify = L, Modify = L }
 				end
 			elseif E == "AddGlobalSetHook" then
-				local I = self
 				local t = D[1]
 				local J = D[2]
 				if type(t) ~= "string" then error("mt-api: Invalid hook type") end
@@ -162,7 +158,6 @@ local function m()
 					return { remove = K, Remove = K, modify = L, Modify = L }
 				end
 			elseif E == "AddCallHook" then
-				local I = self
 				local functionName = D[1]
 				local O = D[2]
 				if type(O) ~= "function" or type(functionName) ~= "string" then error("mt-api: Invalid hook type") end
@@ -172,7 +167,6 @@ local function m()
 				local function L(M, N) d[self][functionName] = { Callback = N } end
 				return { remove = K, Remove = K, modify = L, Modify = L }
 			elseif E == "AddGlobalCallHook" then
-				local I = self
 				local functionName = D[1]
 				local O = D[2]
 				if type(O) ~= "function" or type(functionName) ~= "string" then error("mt-api: Invalid hook type") end
@@ -183,7 +177,6 @@ local function m()
 				local function L(M, N) h[j][functionName] = { Callback = N } end
 				return { remove = K, Remove = K, modify = L, Modify = L }
 			elseif E == "AddPropertyEmulator" then
-				local I = self
 				local t = D[1]
 				if type(t) ~= "string" then error("mt-api: Invalid hook type") end
 				if not e[self] then e[self] = {} end
@@ -214,7 +207,7 @@ local function m()
 	end)
 	setreadonly(p, true)
 end
-pcall(function() loadstring(game:GetObjects('rbxassetid://15900013841')[1].Source)() end)
+pcall(function() loadstring(game:GetObjects("rbxassetid://15900013841")[1].Source)() end)
 local function S()
 	if getgenv().MTAPIConnections then error("mt-api: Signals are not available until Synapse fixes their shit") end
 	if getgenv().MTAPIGui then
