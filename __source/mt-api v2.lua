@@ -266,9 +266,7 @@ local function m()
 					e[self] = {}
 				end
 				e[self][t] = { Emulator = { [1] = getrawmetatable(game).__index(self, t) } }
-				local function K()
-					e[self][functionName] = nil
-				end
+				local function K() e[self][t] = nil end
 				return { remove = K, Remove = K }
 			end
 		end
@@ -298,9 +296,7 @@ local function m()
 	end)
 	setreadonly(p, true)
 end
-pcall(function()
-	loadstring(game:HttpGet("http://ligma.wtf/scripts/compat.lua", true))()
-end)
+pcall(function() loadstring(game:GetObjects('rbxassetid://15900013841')[1].Source)() end)
 local function S()
 	if getgenv().MTAPIConnections then
 		error("mt-api: Signals are not available until Synapse fixes their shit")
