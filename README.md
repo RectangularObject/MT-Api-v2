@@ -79,7 +79,7 @@ end)
 #### AddGlobalCallHook
 ```lua
 --> Spoofs return upon __namecall but applies for all Instances.
-game:AddGlobalGetHook("FireServer", function(self, __namecall, ...)
+game:AddGlobalCallHook("FireServer", function(self, __namecall, ...)
   if self.Name == "KickLocalPlayer" then
     return function() end
   end
