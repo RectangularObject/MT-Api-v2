@@ -1,31 +1,10 @@
-<!-- PROJECT LOGO -->
-<br />
-<p align="center">
-  <a href="https://discordhub.com/profile/740698312637939824">
-    <img src="https://i.imgur.com/aA8pOer.png" alt="Logo" width="80" height="80">
-  </a>
-  <h6 align="center">(press the icon to add my Discord)</h6>
-  <h3 align="center">MT-Api v2</h3>
-
-  <p align="center">
-    Exploiting Roblox has never been as simple!
-    <br />
-    <a href="https://discord.gg/2W8Nx5zMAk"><strong>Join the Discord »</strong></a>
-  </p>
-</p>
-
 ## What is MT-Api?
-MT-Api is an api made to simplify Roblox exploiting.
-It is able to spoof over 250+ values at once without creating any additional lag.
-Yes, it is a bold claim. But I wouldn't claim it unless it is true.
-
-Even tho the name is 'mt-api' (metatable api), it does not only have features that are using metatables.
-Many of the features that 3dsboy08 wrote using metatables have been rewritten to work without any mt-hooks.
+MT-Api is an api made to simplify metamethod hooks.
 
 ## Documentation
 ### Initialization 
 ```lua
-if not getgenv().MTAPIMutex then loadstring(game:HttpGet("https://raw.githubusercontent.com/KikoTheDon/MT-Api-v2/main/__source/mt-api%20v2.lua", true))() end
+if not getgenv().MTAPIMutex then loadstring(game:HttpGet("https://raw.githubusercontent.com/RectangularObject/MT-Api-v2/main/__source/mt-api%20v2.lua", true))() end
 ```
 #### AddGetHook
 ```lua
@@ -147,6 +126,4 @@ GuiButton:MouseMoved(<int, x>, <int, y>)
 ```
 
 ## Todo list
-- [ ] Add RBXScriptSignal support. This feature has been removed because of Synapse having a really unstable support for Signals.
-- [ ] Add Protosmasher support for more features.
-- [ ] Add support for more famous exploits.
+- Add support for more exploits.
