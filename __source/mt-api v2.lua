@@ -11,15 +11,29 @@ local i = {}
 local j = 0
 local k = 0
 local l = 0
+if not pcall(table.foreach, { 0 }, checkcaller) then
+	-- checkcaller should not yield, replace with lua implementation
+	if identifyexecutor() == "Celery" then
+		checkcaller = function()
+			for idx = 1, 19998 do
+				local func = debug.info(idx, "f")
+				if not func then
+					local source = debug.info(idx - 1, "s")
+					if source == "load" then return true end
+					return false
+				end
+			end
+			error("mt-api: Unexpected error occurred")
+		end
+	else
+		error("mt-api: Exploit not supported, checkcaller yields")
+	end
+end
 local function m()
-	if not getrawmetatable then error("mt-api: Exploit not supported") end
+	if not getrawmetatable then error("mt-api: Exploit not supported, getrawmetatable is missing") end
 	local o = checkcaller
-	local p = getrawmetatable(game)
-	setreadonly(p, false)
-	local q = p.__index
-	local r = p.__newindex
-	local s = p.__namecall
-	p.__index = newcclosure(function(self, t)
+	local q = getrawmetatable(game).__index
+	hookmetamethod(game, "__index", function(self, t)
 		if not getgenv().MTAPIDebug and o() then return q(self, t) end
 		if a[self] and a[self][t] then
 			local u = a[self][t]
@@ -40,13 +54,13 @@ local function m()
 					else
 						return y.Value or q(self, t)
 					end
-					break
 				end
 			end
 		end
 		return q(self, t)
 	end)
-	p.__newindex = newcclosure(function(self, t, z)
+	local r = getrawmetatable(game).__newindex
+	hookmetamethod(game, "__newindex", function(self, t, z)
 		if not getgenv().MTAPIDebug and o() then return r(self, t, z) end
 		if c[self] and c[self][t] then
 			local A = c[self][t]
@@ -72,7 +86,6 @@ local function m()
 					else
 						return r(self, t, C.Value or z)
 					end
-					break
 				end
 			end
 			for w, x in next, i do
@@ -81,7 +94,8 @@ local function m()
 		end
 		return r(self, t, z)
 	end)
-	p.__namecall = newcclosure(function(self, ...)
+	local s = getrawmetatable(game).__namecall
+	hookmetamethod(game, "__namecall", function(self, ...)
 		local D = { ... }
 		local E = getnamecallmethod()
 		if o() then
@@ -96,7 +110,7 @@ local function m()
 				G = G:sub(1, -3)
 				H = H:sub(1, -3)
 				F = F .. G .. ") (" .. H .. ")"
-				rconsolewarn(F)
+				rconsoleprint(F)
 			end
 			if E == "AddGetHook" then
 				if #D < 1 then error("mt-api: Invalid argument count") end
@@ -199,64 +213,13 @@ local function m()
 					local R = x[E]
 					if R.Callback then return R.Callback(self, s, ...) or { Failure = true } end
 					error("mt-api: Callback is nil")
-					break
 				end
 			end
 		end
 		return s(self, ...)
 	end)
-	setreadonly(p, true)
 end
-pcall(function() loadstring(game:GetObjects("rbxassetid://15900013841")[1].Source)() end)
-local function S()
-	if getgenv().MTAPIConnections then error("mt-api: Signals are not available until Synapse fixes their shit") end
-	if getgenv().MTAPIGui then
-		game:AddGlobalCallHook("MouseButton1Down", function(self, T, ...)
-			local U = { ... }
-			local V = U[1]
-			local W = U[2]
-			firesignal(getrawmetatable(game).__index(self, "MouseButton1Down"), V, W)
-		end)
-		game:AddGlobalCallHook("MouseButton1Up", function(self, T, ...)
-			local U = { ... }
-			local V = U[1] or nil
-			local W = U[2] or nil
-			firesignal(getrawmetatable(game).__index(self, "MouseButton1Up"), V, W)
-		end)
-		game:AddGlobalCallHook("MouseButton1Click", function(self, T, ...) firesignal(getrawmetatable(game).__index(self, "MouseButton1Click")) end)
-		game:AddGlobalCallHook("MouseButton2Down", function(self, T, ...)
-			local U = { ... }
-			local V = U[1]
-			local W = U[2]
-			firesignal(getrawmetatable(game).__index(self, "MouseButton2Down"), V, W)
-		end)
-		game:AddGlobalCallHook("MouseButton2Up", function(self, T, ...)
-			local U = { ... }
-			local V = U[1] or nil
-			local W = U[2] or nil
-			firesignal(getrawmetatable(game).__index(self, "MouseButton2Up"), V, W)
-		end)
-		game:AddGlobalCallHook("MouseButton2Click", function(self, T, ...) firesignal(getrawmetatable(game).__index(self, "MouseButton2Click")) end)
-		game:AddGlobalCallHook("MouseEnter", function(self, T, ...)
-			local U = { ... }
-			local V = U[1] or nil
-			local W = U[2] or nil
-			firesignal(getrawmetatable(game).__index(self, "MouseEnter"), V, W)
-		end)
-		game:AddGlobalCallHook("MouseLeave", function(self, T, ...)
-			local U = { ... }
-			local V = U[1] or nil
-			local W = U[2] or nil
-			firesignal(getrawmetatable(game).__index(self, "MouseLeave"), V, W)
-		end)
-		game:AddGlobalCallHook("MouseMoved", function(self, T, ...)
-			local U = { ... }
-			local V = U[1] or nil
-			local W = U[2] or nil
-			firesignal(getrawmetatable(game).__index(self, "MouseMoved"), V, W)
-		end)
-	end
-end
+-- the hell is this
+--(loadstring((game:GetObjects("rbxassetid://15900013841")[1] :: Script).Source) :: (...any) -> ...any)()
 m()
-S()
 getgenv().MTAPIMutex = true
