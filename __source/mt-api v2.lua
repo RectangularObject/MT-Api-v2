@@ -32,15 +32,17 @@ end
 local function m()
 	if not getrawmetatable then error("mt-api: Exploit not supported, getrawmetatable is missing") end
 	local o = checkcaller
-	local q = getrawmetatable(game).__index
-	hookmetamethod(game, "__index", function(self, t)
-		if not getgenv().MTAPIDebug and o() then return q(self, t) end
+	local gamemetatable = getrawmetatable(game)
+	setreadonly(gamemetatable, false)
+	local original_index = gamemetatable.__index
+	gamemetatable.__index = newcclosure(function(self, t)
+		if not getgenv().MTAPIDebug and o() then return original_index(self, t) end
 		if a[self] and a[self][t] then
 			local u = a[self][t]
 			if u.IsCallback then
-				return u.Value(self, q(self, t)) or q(self, t)
+				return u.Value(self, original_index(self, t)) or original_index(self, t)
 			else
-				return u.Value or q(self, t)
+				return u.Value or original_index(self, t)
 			end
 		elseif e[self] and e[self][t] then
 			local v = e[self][t].Emulator
@@ -50,25 +52,25 @@ local function m()
 				if x[t] then
 					local y = x[t]
 					if y.IsCallback then
-						return y.Value(self) or q(self, t)
+						return y.Value(self) or original_index(self, t)
 					else
-						return y.Value or q(self, t)
+						return y.Value or original_index(self, t)
 					end
 				end
 			end
 		end
-		return q(self, t)
+		return original_index(self, t)
 	end)
-	local r = getrawmetatable(game).__newindex
-	hookmetamethod(game, "__newindex", function(self, t, z)
-		if not getgenv().MTAPIDebug and o() then return r(self, t, z) end
+	local original_newindex = gamemetatable.__newindex
+	gamemetatable.__newindex = newcclosure(function(self, t, z)
+		if not getgenv().MTAPIDebug and o() then return original_newindex(self, t, z) end
 		if c[self] and c[self][t] then
 			local A = c[self][t]
 			if A.IsCallback then
 				local B = A.Value(self, z)
-				return r(self, t, B or z)
+				return original_newindex(self, t, B or z)
 			else
-				return r(self, t, A.Value or z)
+				return original_newindex(self, t, A.Value or z)
 			end
 		elseif b[self] and b[self][t] then
 			return
@@ -82,9 +84,9 @@ local function m()
 					local C = x[t]
 					if C.IsCallback then
 						local B = C.Value(self, z)
-						return r(self, t, B or z)
+						return original_newindex(self, t, B or z)
 					else
-						return r(self, t, C.Value or z)
+						return original_newindex(self, t, C.Value or z)
 					end
 				end
 			end
@@ -92,10 +94,10 @@ local function m()
 				if x[t] then return end
 			end
 		end
-		return r(self, t, z)
+		return original_newindex(self, t, z)
 	end)
-	local s = getrawmetatable(game).__namecall
-	hookmetamethod(game, "__namecall", function(self, ...)
+	local original_namecall = gamemetatable.__namecall
+	gamemetatable.__namecall = newcclosure(function(self, ...)
 		local D = { ... }
 		local E = getnamecallmethod()
 		if o() then
@@ -194,7 +196,7 @@ local function m()
 				local t = D[1]
 				if type(t) ~= "string" then error("mt-api: Invalid hook type") end
 				if not e[self] then e[self] = {} end
-				e[self][t] = { Emulator = { [1] = getrawmetatable(game).__index(self, t) } }
+				e[self][t] = { Emulator = { [1] = gamemetatable.__index(self, t) } }
 				local function K() e[self][t] = nil end
 				return { remove = K, Remove = K }
 			end
@@ -203,7 +205,7 @@ local function m()
 			if d[self] and d[self][E] then
 				local P = d[self][E]
 				if P.Callback then
-					local function Q(...) return s(self, ...) end
+					local function Q(...) return original_namecall(self, ...) end
 					return P.Callback(Q, ...)
 				end
 				error("mt-api: Callback is nil")
@@ -211,13 +213,14 @@ local function m()
 			for w, x in next, h do
 				if x[E] then
 					local R = x[E]
-					if R.Callback then return R.Callback(self, s, ...) or { Failure = true } end
+					if R.Callback then return R.Callback(self, original_namecall, ...) or { Failure = true } end
 					error("mt-api: Callback is nil")
 				end
 			end
 		end
-		return s(self, ...)
+		return original_namecall(self, ...)
 	end)
+	setreadonly(gamemetatable, true)
 end
 -- the hell is this
 --(loadstring((game:GetObjects("rbxassetid://15900013841")[1] :: Script).Source) :: (...any) -> ...any)()
